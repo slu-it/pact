@@ -25,7 +25,7 @@ class MyRequestResponseContractTest {
 
     @LocalServerPort
     fun init(port: Int) {
-        testFactory.httpTarget.port = { port }
+        testFactory.target.port = { port }
     }
 
     @TestFactory fun `all my request response contract tests`() =

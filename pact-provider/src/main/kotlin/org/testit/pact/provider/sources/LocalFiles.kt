@@ -1,10 +1,10 @@
-package org.testit.pact.provider.junit
+package org.testit.pact.provider.sources
 
 import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.PactReader
 import java.io.File
 
-class PactFileLoader(
+class LocalFiles(
         private val pactFolder: String
 ) : PactSource {
 

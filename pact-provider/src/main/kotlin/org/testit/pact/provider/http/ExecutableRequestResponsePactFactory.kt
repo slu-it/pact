@@ -1,33 +1,34 @@
-package org.testit.pact.provider.junit.http
+package org.testit.pact.provider.http
 
 import au.com.dius.pact.model.Interaction
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.RequestResponsePact
-import org.junit.jupiter.api.DynamicTest
-import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.testit.pact.commons.logger
-import org.testit.pact.provider.junit.PactSource
-import org.testit.pact.provider.junit.http.clients.ApacheHttpClient
-import org.testit.pact.provider.junit.http.clients.HttpClient
-import org.testit.pact.provider.junit.message.MessagePactTestFactory
+import org.testit.pact.provider.ExecutablePact
+import org.testit.pact.provider.ExecutablePactFactory
+import org.testit.pact.provider.http.clients.ApacheHttpClient
+import org.testit.pact.provider.http.clients.HttpClient
+import org.testit.pact.provider.message.ExecutableMessagePactFactory
+import org.testit.pact.provider.sources.PactSource
 
-class RequestResponsePactTestFactory(
+class ExecutableRequestResponsePactFactory(
         private val pactSource: PactSource,
         private val provider: String,
         private val httpClient: HttpClient = ApacheHttpClient(),
-        val httpTarget: HttpTarget = HttpTarget()
-) {
+        val target: Target = Target()
+) : ExecutablePactFactory {
 
-    private val log = MessagePactTestFactory::class.logger
-    private val comparator = ResponseComparator()
+    private val log = ExecutableMessagePactFactory::class.logger
+    private val matcher = ResponseMatcher()
 
-    fun createTests(consumerFilter: String? = null, callbackHandler: Any): List<DynamicTest> {
+    override fun createExecutablePacts(consumerFilter: String?, callbackHandler: Any): List<ExecutablePact> {
         return loadRequestResponsePacts(provider, consumerFilter)
                 .flatMap { pact ->
                     pact.interactions.map { interaction ->
-                        dynamicTest("${pact.consumer.name}: ${interaction.description}") {
-                            executeRequestResponseTest(interaction, callbackHandler)
-                        }
+                        ExecutablePact(
+                                name = "${pact.consumer.name}: ${interaction.description}",
+                                executable = { executeRequestResponseTest(interaction, callbackHandler) }
+                        )
                     }
                 }
     }
@@ -47,9 +48,9 @@ class RequestResponsePactTestFactory(
         prepareInteractionState(interaction, callbackHandler)
 
         val expectedResponse = interaction.response
-        val actualResponse = httpClient.execute(interaction.request, httpTarget)
+        val actualResponse = httpClient.send(interaction.request, target)
 
-        val result = comparator.compare(expectedResponse, actualResponse)
+        val result = matcher.match(expectedResponse, actualResponse)
         if (result.hasErrors) {
             throw AssertionError("Response expectation(s) were not met:\n\n$result")
         }

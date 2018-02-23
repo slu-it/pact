@@ -1,4 +1,6 @@
-package org.testit.pact.provider.junit.http
+package org.testit.pact.provider.http
+
+import kotlin.annotation.Target
 
 @Retention
 @Target(AnnotationTarget.FUNCTION)

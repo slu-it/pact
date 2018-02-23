@@ -10,9 +10,9 @@
         <version>0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>pact-provider-junit5</artifactId>
+    <artifactId>pact-provider</artifactId>
     <packaging>jar</packaging>
-    <name>testIT | Pact - Provider JUnit 5 Support</name>
+    <name>testIT | Pact - Provider</name>
 
     <dependencies>
         <dependency>
@@ -24,13 +24,18 @@
             <artifactId>kotlin-reflect</artifactId>
         </dependency>
         <dependency>
-            <groupId>info.novatec.testit</groupId>
-            <artifactId>pact-provider</artifactId>
-            <version>${project.parent.version}</version>
+            <groupId>au.com.dius</groupId>
+            <artifactId>pact-jvm-matchers_2.12</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

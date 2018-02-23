@@ -1,4 +1,4 @@
-package org.testit.pact.provider.junit
+package org.testit.pact.provider.sources
 
 import au.com.dius.pact.model.Pact
 

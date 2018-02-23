@@ -1,6 +1,6 @@
-package org.testit.pact.provider.junit.http
+package org.testit.pact.provider.http
 
-class HttpTarget(
+class Target(
         protocol: String = "http",
         host: String = "localhost",
         port: Int = 8080,

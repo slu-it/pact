@@ -1,4 +1,4 @@
-package org.testit.pact.provider.junit.http
+package org.testit.pact.provider.http
 
 import au.com.dius.pact.matchers.BodyMismatch
 import au.com.dius.pact.matchers.HeaderMismatch
@@ -6,9 +6,9 @@ import au.com.dius.pact.matchers.Mismatch
 import au.com.dius.pact.model.*
 import scala.collection.JavaConverters.seqAsJavaListConverter
 
-class ResponseComparator {
+class ResponseMatcher {
 
-    fun compare(expectedResponse: Response, actualResponse: ComparableResponse): Result {
+    fun match(expectedResponse: Response, actualResponse: MatchableResponse): Result {
         val actualStatus = actualResponse.status
         val actualHeaders = actualResponse.headers
         val actualBody = actualResponse.body

@@ -1,4 +1,4 @@
-package org.testit.pact.provider.junit.message
+package org.testit.pact.provider.message
 
 import au.com.dius.pact.matchers.BodyMismatch
 import au.com.dius.pact.matchers.MatchingConfig
@@ -7,9 +7,9 @@ import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.Response
 import au.com.dius.pact.model.v3.messaging.Message
 
-class MessageComparator {
+class MessageMatcher {
 
-    fun compare(expectedMessage: Message, actualMessage: ComparableMessage): Result {
+    fun match(expectedMessage: Message, actualMessage: ActualMessage): Result {
         val actualBody = actualMessage.body.let { String(it) }
         val bodyMismatches = executeComparison(expectedMessage, actualBody)
         return Result(
