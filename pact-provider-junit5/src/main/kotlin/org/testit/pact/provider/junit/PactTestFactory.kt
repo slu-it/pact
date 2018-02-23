@@ -8,7 +8,7 @@ import org.testit.pact.provider.message.ExecutableMessagePactFactory
 import org.testit.pact.provider.sources.PactSource
 
 class PactTestFactory(
-        private val factory: ExecutablePactFactory
+        val factory: ExecutablePactFactory
 ) {
 
     fun createTests(consumerFilter: String? = null, callbackHandler: Any): List<DynamicTest> {
