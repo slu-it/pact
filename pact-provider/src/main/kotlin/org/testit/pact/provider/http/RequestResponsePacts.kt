@@ -8,17 +8,17 @@ import org.testit.pact.provider.ExecutablePact
 import org.testit.pact.provider.ExecutablePactFactory
 import org.testit.pact.provider.http.clients.ApacheHttpClient
 import org.testit.pact.provider.http.clients.HttpClient
-import org.testit.pact.provider.message.ExecutableMessagePactFactory
+import org.testit.pact.provider.message.MessagePacts
 import org.testit.pact.provider.sources.PactSource
 
-class ExecutableRequestResponsePactFactory(
+class RequestResponsePacts(
         private val pactSource: PactSource,
         private val provider: String,
         private val httpClient: HttpClient = ApacheHttpClient(),
         val target: Target = Target()
 ) : ExecutablePactFactory {
 
-    private val log = ExecutableMessagePactFactory::class.logger
+    private val log = MessagePacts::class.logger
     private val matcher = ResponseMatcher()
 
     override fun createExecutablePacts(consumerFilter: String?, callbackHandler: Any): List<ExecutablePact> {

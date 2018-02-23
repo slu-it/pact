@@ -7,12 +7,12 @@ import org.testit.pact.provider.ExecutablePact
 import org.testit.pact.provider.ExecutablePactFactory
 import org.testit.pact.provider.sources.PactSource
 
-class ExecutableMessagePactFactory(
+class MessagePacts(
         private val pactSource: PactSource,
         private val provider: String
 ) : ExecutablePactFactory {
 
-    private val log = ExecutableMessagePactFactory::class.logger
+    private val log = MessagePacts::class.logger
     private val matcher = MessageMatcher()
 
     override fun createExecutablePacts(consumerFilter: String?, callbackHandler: Any): List<ExecutablePact> {
