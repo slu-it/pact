@@ -52,7 +52,7 @@ class RequestResponsePacts(
 
         val result = matcher.match(expectedResponse, actualResponse)
         if (result.hasErrors) {
-            throw AssertionError("Response expectation(s) were not met:\n\n$result")
+            throw ResponseMissmatchException(result)
         }
 
         log.info("Response for interaction [{}] matched expectations.", interaction.description)

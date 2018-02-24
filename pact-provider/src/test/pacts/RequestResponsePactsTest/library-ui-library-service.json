@@ -1,0 +1,36 @@
+{
+  "provider": { "name": "library-service" },
+  "consumer": { "name": "library-ui" },
+  "interactions": [
+    {
+      "description": "adding a new book",
+      "request": {
+        "method": "POST",
+        "path": "/api/books",
+        "headers": {
+          "X-CorrelationId": "46d287e5-5d6b-42bf-83be-f7085ea132ce"
+        },
+        "body": {
+          "title": "The Martian",
+          "isbn": "9780091956141"
+        }
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+          "X-CorrelationId": "46d287e5-5d6b-42bf-83be-f7085ea132ce"
+        },
+        "body": {
+          "title": "The Martian",
+          "isbn": "9780091956141",
+          "authors": ["Andy Weir"],
+          "numberOfPages": 384
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": { "version": "3.0.0" },
+    "pact-jvm": { "version": "3.5.12" }
+  }
+}

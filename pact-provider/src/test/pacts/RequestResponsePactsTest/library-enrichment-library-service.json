@@ -1,0 +1,26 @@
+{
+  "provider": { "name": "library-service" },
+  "consumer": { "name": "library-enrichment" },
+  "interactions": [
+    {
+      "description": "service ping",
+      "request": {
+        "method": "GET",
+        "path": "/api",
+        "headers": {
+          "X-CorrelationId": "46d287e5-5d6b-42bf-83be-f7085ea132ce"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "X-CorrelationId": "46d287e5-5d6b-42bf-83be-f7085ea132ce"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": { "version": "3.0.0" },
+    "pact-jvm": { "version": "3.5.12" }
+  }
+}
