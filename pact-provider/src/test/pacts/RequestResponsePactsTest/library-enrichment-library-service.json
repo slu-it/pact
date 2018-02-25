@@ -3,20 +3,26 @@
   "consumer": { "name": "library-enrichment" },
   "interactions": [
     {
-      "description": "service ping",
+      "description": "service ping - provider states test",
       "request": {
         "method": "GET",
-        "path": "/api",
-        "headers": {
-          "X-CorrelationId": "46d287e5-5d6b-42bf-83be-f7085ea132ce"
-        }
+        "path": "/api"
       },
       "response": {
-        "status": 200,
-        "headers": {
-          "X-CorrelationId": "46d287e5-5d6b-42bf-83be-f7085ea132ce"
+        "status": 200
+      },
+      "providerStates": [
+        {
+          "name": "some provider state"
+        },
+        {
+          "name": "some provider state with parameters",
+          "params": {
+            "foo": "bar",
+            "bar": "foo"
+          }
         }
-      }
+      ]
     }
   ],
   "metadata": {

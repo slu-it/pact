@@ -15,7 +15,8 @@ class MessagePacts(
     private val log = MessagePacts::class.logger
     private val matcher = MessageMatcher()
 
-    override fun createExecutablePacts(consumerFilter: String?, callbackHandler: Any): List<ExecutablePact> {
+    override fun createExecutablePacts(consumerFilter: String?, callbackHandler: Any?): List<ExecutablePact> {
+        if(callbackHandler == null) error("message pacts require a callback handler")
         return loadMessagePacts(provider, consumerFilter)
                 .flatMap { pact ->
                     pact.messages.map { message ->

@@ -1,6 +1,5 @@
 package org.testit.pact.provider.http
 
-import au.com.dius.pact.model.Interaction
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.RequestResponsePact
 import org.testit.pact.commons.logger
@@ -21,13 +20,14 @@ class RequestResponsePacts(
     private val log = MessagePacts::class.logger
     private val matcher = ResponseMatcher()
 
-    override fun createExecutablePacts(consumerFilter: String?, callbackHandler: Any): List<ExecutablePact> {
+    override fun createExecutablePacts(consumerFilter: String?, callbackHandler: Any?): List<ExecutablePact> {
+        val providerStateHandler = ProviderStateHandler(callbackHandler)
         return loadRequestResponsePacts(provider, consumerFilter)
                 .flatMap { pact ->
                     pact.interactions.map { interaction ->
                         ExecutablePact(
                                 name = "${pact.consumer.name}: ${interaction.description}",
-                                executable = { executeRequestResponseTest(interaction, callbackHandler) }
+                                executable = { executeRequestResponseTest(interaction, providerStateHandler) }
                         )
                     }
                 }
@@ -44,8 +44,8 @@ class RequestResponsePacts(
         return pacts
     }
 
-    private fun executeRequestResponseTest(interaction: RequestResponseInteraction, callbackHandler: Any) {
-        prepareInteractionState(interaction, callbackHandler)
+    private fun executeRequestResponseTest(interaction: RequestResponseInteraction, providerStateHandler: ProviderStateHandler) {
+        providerStateHandler.prepare(interaction)
 
         val expectedResponse = interaction.response
         val actualResponse = httpClient.send(interaction.request, target)
@@ -56,18 +56,6 @@ class RequestResponsePacts(
         }
 
         log.info("Response for interaction [{}] matched expectations.", interaction.description)
-    }
-
-    private fun prepareInteractionState(interaction: Interaction, callbackHandler: Any) {
-        interaction.providerStates.forEach { state ->
-            val stateChangeMethod = callbackHandler.javaClass.declaredMethods
-                    .single { it.getAnnotation(ProviderState::class.java)?.value == state.name }
-            if (stateChangeMethod.parameterCount == 0) {
-                stateChangeMethod.invoke(callbackHandler)
-            } else {
-                stateChangeMethod.invoke(callbackHandler, state.params)
-            }
-        }
     }
 
 }
