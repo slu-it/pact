@@ -16,24 +16,27 @@ using JUnit 5's `@TestFactory` mechanism.
 ```kotlin
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [Application::class], webEnvironment = RANDOM_PORT)
-class MyRequestResponseContractTest {
+class HttpContractTest {
 
-    val testFactory = RequestResponsePactTestFactory(
-            pactSource = PactFileLoader("src/test/pacts"),
-            provider = "some-provider"
-    )
+    @MockBean lateinit var dataStore: BookDataStore
+    @MockBean lateinit var eventDispatcher: EventDispatcher<BookEvent>
+
+    val pacts = RequestResponsePacts(LocalFiles("src/test/pacts/http"), "library-service")
 
     @LocalServerPort
     fun init(port: Int) {
-        testFactory.target.port = { port }
+        pacts.target.port = { port }
     }
 
-    @TestFactory fun `all my request response contract tests`() =
-            testFactory.createTests(callbackHandler = this)
+    @TestFactory fun `library enrichment contract tests`() = PactTestFactory(pacts)
+            .createTests("library-enrichment", this)
 
-    @ProviderState("Some provider state with {parameters}")
-    fun `some provider state`(params: Map<String, String>) {
-        // ...
+    @ProviderState("A book with the ID {bookId} exists")
+    fun `book with fixed ID exists`(params: Map<String, String>) {
+        val bookId = BookId.from(params["bookId"]!!)
+        val bookRecord = BookRecord(bookId, Books.THE_MARTIAN)
+        given { dataStore.findById(bookId) }.willReturn { bookRecord }
+        given { dataStore.createOrUpdate(any()) }.willAnswer { it.arguments[0] as BookRecord }
     }
 
 }
@@ -42,22 +45,27 @@ class MyRequestResponseContractTest {
 **Message Pact provider side tests:**
 
 ```kotlin
-class MyMessageContractTest {
+class MessageContractTest {
 
-    val messageProducer = ...
+    val configuration = MessagingConfiguration()
+    val objectMapper = ObjectMapper().apply { findAndRegisterModules() }
+    val messageConverter = configuration.messageConverter(objectMapper)
 
-    val testFactory = MessagePactTestFactory(
-            pactSource = PactFileLoader("src/test/pacts/message"),
-            provider = "library-service"
-    )
+    val pacts = MessagePacts(LocalFiles("src/test/pacts/message"), "library-service")
 
-    @TestFactory fun `all my message contract tests`() =
-            testFactory.createTests(callbackHandler = this)
+    @TestFactory fun `library-enrichment consumer contract tests`() = PactTestFactory(pacts)
+            .createTests("library-enrichment", this)
 
-    @MessageProducer("Some Message Producer")
-    fun verifySomeMessage(): ComparableMessage {
-        val message = messageProducer.produceMessage()
-        return ComparableMessage(message.body)
+    @MessageProducer("'The Martian' was added event")
+    fun `verify The Martian was added event`(): ActualMessage {
+        val event = BookAdded(
+                id = UUID.randomUUID(),
+                bookId = BookId.generate(),
+                isbn = Books.THE_MARTIAN.isbn,
+                timestamp = OffsetDateTime.now()
+        )
+        val message = messageConverter.toMessage(event, MessageProperties())
+        return ActualMessage(message.body)
     }
 
 }
