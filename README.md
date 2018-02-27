@@ -28,8 +28,8 @@ class HttpContractTest {
         pacts.target.port = { port }
     }
 
-    @TestFactory fun `library enrichment contract tests`() = PactTestFactory(pacts)
-            .createTests("library-enrichment", this)
+    @TestFactory fun `library enrichment contract tests`() = 
+            PactTestFactory.createTests(pacts, "library-enrichment", this)
 
     @ProviderState("A book with the ID {bookId} exists")
     fun `book with fixed ID exists`(params: Map<String, String>) {
@@ -53,8 +53,8 @@ class MessageContractTest {
 
     val pacts = MessagePacts(LocalFiles("src/test/pacts/message"), "library-service")
 
-    @TestFactory fun `library-enrichment consumer contract tests`() = PactTestFactory(pacts)
-            .createTests("library-enrichment", this)
+    @TestFactory fun `library-enrichment consumer contract tests`() =
+            PactTestFactory.createTests(pacts, "library-enrichment", this)
 
     @MessageProducer("'The Martian' was added event")
     fun `verify The Martian was added event`(): ActualMessage {
