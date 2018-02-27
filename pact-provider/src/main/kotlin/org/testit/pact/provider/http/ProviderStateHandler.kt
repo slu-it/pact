@@ -11,7 +11,7 @@ class ProviderStateHandler(
 
     fun prepare(interaction: Interaction) {
         if (interaction.providerStates.isNotEmpty() && callbackHandler == null) {
-            error("No callback handler defined, but interaction needs provider state!")
+            throw ProviderStateHandlerNotSetException(interaction)
         }
         interaction.providerStates.forEach { state ->
             val stateName = state.name
@@ -20,10 +20,18 @@ class ProviderStateHandler(
             val method = providerStateMethods[stateName]
                     ?: throw ProviderStateMethodNotFoundException(stateName)
             when {
-                method.parameterCount == 0 -> method.invoke(callbackHandler)
-                method.parameterCount == 1 -> method.invoke(callbackHandler, parameters)
+                method.parameterCount == 0 -> method.tryToInvokeMethod(stateName)
+                method.parameterCount == 1 -> method.tryToInvokeMethod(stateName, parameters)
                 else -> throw MalformedProviderStateMethodException(stateName)
             }
+        }
+    }
+
+    private fun Method.tryToInvokeMethod(stateName: String, vararg parameters: Any) {
+        try {
+            invoke(callbackHandler, *parameters)
+        } catch (e: Exception) {
+            throw ProviderStateInvocationException(stateName, e)
         }
     }
 
@@ -39,8 +47,14 @@ class ProviderStateHandler(
 
 }
 
-class ProviderStateMethodNotFoundException(state: String)
-    : RuntimeException("Could not find a method for provider state [$state]!")
+class ProviderStateHandlerNotSetException(interaction: Interaction)
+    : RuntimeException("There are provider state(s) defined for interaction [${interaction.description}] but you didn't set a callback handler!")
 
-class MalformedProviderStateMethodException(state: String)
-    : RuntimeException("The method for provider state [$state] is malformed! Only none or a single parameter of type Map<String, Any> are allowed.")
+class ProviderStateMethodNotFoundException(stateName: String)
+    : RuntimeException("Could not find a method for provider state [$stateName]!")
+
+class MalformedProviderStateMethodException(stateName: String)
+    : RuntimeException("The method for provider state [$stateName] is malformed! Only none or a single parameter of type Map<String, Any> are allowed.")
+
+class ProviderStateInvocationException(stateName: String, cause: Throwable)
+    : RuntimeException("There was an exception while preparing the provider state [$stateName]:", cause)

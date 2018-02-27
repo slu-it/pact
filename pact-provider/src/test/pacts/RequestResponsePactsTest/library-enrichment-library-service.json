@@ -1,6 +1,10 @@
 {
-  "provider": { "name": "library-service" },
-  "consumer": { "name": "library-enrichment" },
+  "provider": {
+    "name": "library-service"
+  },
+  "consumer": {
+    "name": "library-enrichment"
+  },
   "interactions": [
     {
       "description": "service ping - provider states test",
@@ -26,7 +30,11 @@
     }
   ],
   "metadata": {
-    "pact-specification": { "version": "3.0.0" },
-    "pact-jvm": { "version": "3.5.12" }
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "3.5.12"
+    }
   }
 }

@@ -2,21 +2,18 @@ package org.testit.pact.provider.http
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.testit.pact.provider.sources.LocalFiles
 import utils.WireMockExtension
 
+@TestInstance(PER_CLASS)
 internal class RequestResponsePactsTest {
 
-    companion object {
-        @RegisterExtension
-        @JvmField val wireMock = WireMockExtension()
-    }
+    @RegisterExtension
+    @JvmField val wireMock = WireMockExtension()
 
     val cut = RequestResponsePacts(LocalFiles("src/test/pacts/RequestResponsePactsTest"), "library-service")
 
@@ -26,12 +23,18 @@ internal class RequestResponsePactsTest {
 
     @Test fun `without a consumer filter all found pacts are returned`() {
         val executablePacts = cut.createExecutablePacts()
-        assertEquals(2, executablePacts.size)
+        assertThat(executablePacts).hasSize(2)
     }
 
     @Test fun `with a consumer filter only matching pacts are returned`() {
         val executablePacts = cut.createExecutablePacts("library-ui")
-        assertEquals(1, executablePacts.size)
+        assertThat(executablePacts).hasSize(1)
+    }
+
+    @Test fun `exception is thrown if no pacts could be found`() {
+        assertThrows<NoRequestResponsePactsFoundException> {
+            cut.createExecutablePacts("unknown")
+        }
     }
 
     @Nested inner class `response matching` {
@@ -105,7 +108,7 @@ internal class RequestResponsePactsTest {
                         .withBody(body)))
 
         fun executePacts() = cut.createExecutablePacts("library-ui").forEach { it.executable() }
-        fun executePactsExpectingError() = assertThrows<ResponseMissmatchException> { executePacts() }
+        fun executePactsExpectingError() = assertThrows<ResponseMismatchException> { executePacts() }
 
     }
 
@@ -139,7 +142,20 @@ internal class RequestResponsePactsTest {
             }
         }
 
-        fun executePacts(callbackHandler: Any) = cut.createExecutablePacts("library-enrichment", callbackHandler).forEach { it.executable() }
+        @Test fun `exception in case there is no callback handler but interaction has provider states`() {
+            assertThrows<ProviderStateHandlerNotSetException> {
+                executePacts(null)
+            }
+        }
+
+        @Test fun `exception in case there was an exception while invoking a provider state method`() {
+            assertThrows<ProviderStateInvocationException> {
+                executePacts(ExceptionalCallbackHandler())
+            }
+        }
+
+        fun executePacts(callbackHandler: Any?) =
+                cut.createExecutablePacts("library-enrichment", callbackHandler).forEach { it.executable() }
 
     }
 
@@ -171,6 +187,20 @@ internal class RequestResponsePactsTest {
 
         @ProviderState("some provider state with parameters")
         fun someProviderStateWithParameters(params: Map<String, String>, paramA: String) {
+        }
+
+    }
+
+    class ExceptionalCallbackHandler {
+
+        @ProviderState("some provider state")
+        fun someProviderState() {
+            throw RuntimeException()
+        }
+
+        @ProviderState("some provider state with parameters")
+        fun someProviderStateWithParameters(params: Map<String, String>, paramA: String) {
+            throw RuntimeException()
         }
 
     }

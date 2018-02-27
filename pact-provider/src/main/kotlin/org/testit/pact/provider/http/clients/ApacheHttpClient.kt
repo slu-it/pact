@@ -39,7 +39,7 @@ class ApacheHttpClient(
             scheme = target.protocol()
             host = target.host()
             port = target.port()
-            path = target.contextPath() + request.path
+            path = target.path() + request.path
 
             if (!isUrlEncodedFormPost(request)) {
                 request.query?.forEach { (key, values) ->

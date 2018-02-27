@@ -19,6 +19,6 @@ class LocalFiles(
                 .filter { if (consumerFilter != null) it.consumer.name == consumerFilter else true }
     }
 
-    override fun toString() = "Pact Source: [$pactFolder]"
+    override fun toString() = "LocalFiles: $pactFolder"
 
 }

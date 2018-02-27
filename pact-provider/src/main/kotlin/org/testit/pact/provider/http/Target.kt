@@ -10,6 +10,6 @@ class Target(
     var protocol: () -> String = { protocol }
     var host: () -> String = { host }
     var port: () -> Int = { port }
-    var contextPath: () -> String = { contextPath }
+    var path: () -> String = { contextPath }
 
 }
