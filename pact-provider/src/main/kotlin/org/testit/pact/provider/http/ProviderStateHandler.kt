@@ -17,7 +17,7 @@ class ProviderStateHandler(
             val stateName = state.name
             val parameters = state.params
 
-            val method = providerStateMethods[stateName]
+            val method = providerStateMethods[stateName.toLowerCase()]
                     ?: throw ProviderStateMethodNotFoundException(stateName)
             when {
                 method.parameterCount == 0 -> method.tryToInvokeMethod(stateName)
@@ -28,6 +28,9 @@ class ProviderStateHandler(
     }
 
     private fun Method.tryToInvokeMethod(stateName: String, vararg parameters: Any) {
+        if (parameterTypes.any { !Map::class.java.isAssignableFrom(it) }) {
+            throw MalformedProviderStateMethodException(stateName)
+        }
         try {
             invoke(callbackHandler, *parameters)
         } catch (e: Exception) {
@@ -41,7 +44,7 @@ class ProviderStateHandler(
         return callbackHandler.javaClass.declaredMethods
                 .filter { it.isAnnotationPresent(ProviderState::class.java) }
                 .groupBy { it.getAnnotation(ProviderState::class.java).value }
-                .map<String, List<Method>, Pair<String, Method>> { it.key to it.value.single() }
+                .map<String, List<Method>, Pair<String, Method>> { it.key.toLowerCase() to it.value.single() }
                 .toMap()
     }
 
