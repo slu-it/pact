@@ -46,19 +46,19 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <kotlin.version>1.2.20</kotlin.version>
-        <scala.version>2.12.3</scala.version>
-        <groovy.version>2.4.12</groovy.version>
+        <kotlin.version>1.2.30</kotlin.version>
+        <scala.version>2.12.4</scala.version>
+        <groovy.version>2.4.13</groovy.version>
 
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <kotlin-logging.version>1.4.4</kotlin-logging.version>
-        <pact.version>3.5.12</pact.version>
-        <httpclient.version>4.5.3</httpclient.version>
+        <kotlin-logging.version>1.5.3</kotlin-logging.version>
+        <pact.version>3.5.13</pact.version>
+        <httpclient.version>4.5.5</httpclient.version>
 
         <assertj.version>3.9.1</assertj.version>
-        <kotlin-mockito.version>2.0.0-alpha01</kotlin-mockito.version>
-        <wiremock.version>2.10.1</wiremock.version>
+        <kotlin-mockito.version>2.0.0-alpha03</kotlin-mockito.version>
+        <wiremock.version>2.15.0</wiremock.version>
         <junit-jupiter.version>5.1.0</junit-jupiter.version>
         <junit-platform.version>1.1.0</junit-platform.version>
     </properties>
