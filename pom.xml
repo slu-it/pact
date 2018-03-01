@@ -47,33 +47,21 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <kotlin.version>1.2.20</kotlin.version>
+        <scala.version>2.12.3</scala.version>
+        <groovy.version>2.4.12</groovy.version>
 
+        <slf4j.version>1.7.25</slf4j.version>
+        <logback.version>1.2.3</logback.version>
+        <kotlin-logging.version>1.4.4</kotlin-logging.version>
         <pact.version>3.5.12</pact.version>
+        <httpclient.version>4.5.3</httpclient.version>
+
+        <assertj.version>3.9.1</assertj.version>
+        <kotlin-mockito.version>2.0.0-alpha01</kotlin-mockito.version>
         <wiremock.version>2.10.1</wiremock.version>
         <junit-jupiter.version>5.1.0</junit-jupiter.version>
         <junit-platform.version>1.1.0</junit-platform.version>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>3.9.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.nhaarman.mockitokotlin2</groupId>
-            <artifactId>mockito-kotlin</artifactId>
-            <version>2.0.0-alpha01</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
     <dependencyManagement>
         <dependencies>
@@ -87,15 +75,60 @@
                 <artifactId>kotlin-reflect</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.microutils</groupId>
+                <artifactId>kotlin-logging</artifactId>
+                <version>${kotlin-logging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+                <scope>test</scope>
+            </dependency>
+
             <dependency>
                 <groupId>au.com.dius</groupId>
                 <artifactId>pact-jvm-matchers_2.12</artifactId>
                 <version>${pact.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit-jupiter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nhaarman.mockitokotlin2</groupId>
+                <artifactId>mockito-kotlin</artifactId>
+                <version>${kotlin-mockito.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.tomakehurst</groupId>
