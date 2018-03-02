@@ -35,17 +35,12 @@ class ApacheHttpClient(
     }
 
     private fun buildUri(target: Target, request: Request): URI {
-        val uriBuilder = URIBuilder().apply {
-            scheme = target.protocol()
-            host = target.host()
-            port = target.port()
-            path = target.path() + request.path
-
-            if (!isUrlEncodedFormPost(request)) {
-                request.query?.forEach { (key, values) ->
-                    values.forEach { value ->
-                        addParameter(key, value)
-                    }
+        val uri = target.urlWith(request.path).toURI()
+        val uriBuilder = URIBuilder(uri)
+        if (!isUrlEncodedFormPost(request)) {
+            request.query?.forEach { (key, values) ->
+                values.forEach { value ->
+                    uriBuilder.addParameter(key, value)
                 }
             }
         }

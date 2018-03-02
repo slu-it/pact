@@ -3,7 +3,6 @@ package org.testit.pact.provider.http
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.testit.pact.provider.sources.LocalFiles
@@ -18,7 +17,7 @@ internal class RequestResponsePactsTest {
     val cut = RequestResponsePacts(LocalFiles("src/test/pacts/RequestResponsePactsTest"), "library-service")
 
     @BeforeEach fun setPort() {
-        cut.target.port = { wireMock.port() }
+        cut.target.bindPort { wireMock.port() }
     }
 
     @Test fun `without a consumer filter all found pacts are returned`() {
