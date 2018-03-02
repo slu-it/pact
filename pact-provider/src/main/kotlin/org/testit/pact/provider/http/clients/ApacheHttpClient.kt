@@ -1,17 +1,13 @@
 package org.testit.pact.provider.http.clients
 
 import au.com.dius.pact.model.Request
-import au.com.dius.pact.model.orElse
 import org.apache.http.HttpEntityEnclosingRequest
 import org.apache.http.HttpResponse
-import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.*
-import org.apache.http.client.utils.URIBuilder
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.HttpClients
-import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 import org.testit.pact.provider.http.MatchableResponse
 import org.testit.pact.provider.http.Target
@@ -22,83 +18,79 @@ class ApacheHttpClient(
 ) : HttpClient {
 
     override fun send(pactRequest: Request, target: Target): MatchableResponse {
-        val httpRequest = buildRequest(pactRequest, target)
-        return client.execute(httpRequest).use { extractResponse(it) }
+        val targetUri = UriBuilder.build(target, pactRequest)
+        val httpRequest = RequestBuilder.build(targetUri, pactRequest)
+        return client.execute(httpRequest).use(ResponseExtractor::extract)
     }
 
-    private fun buildRequest(request: Request, target: Target): HttpUriRequest {
-        val uri = buildUri(target, request)
-        return buildRequestBase(uri, request).apply {
-            addHeaders(request)
-            addBody(request)
-        }
-    }
+    internal object RequestBuilder {
 
-    private fun buildUri(target: Target, request: Request): URI {
-        val uri = target.urlWith(request.path).toURI()
-        val uriBuilder = URIBuilder(uri)
-        if (!isUrlEncodedFormPost(request)) {
-            request.query?.forEach { (key, values) ->
-                values.forEach { value ->
-                    uriBuilder.addParameter(key, value)
-                }
+        fun build(uri: URI, request: Request): HttpUriRequest {
+            return buildRequestBase(uri, request).apply {
+                addHeaders(request)
+                addBody(request)
             }
         }
-        return uriBuilder.build()
-    }
 
-    private fun buildRequestBase(uri: URI, request: Request) = when (request.lowerCaseMethod) {
-        "get" -> HttpGet(uri)
-        "post" -> HttpPost(uri)
-        "put" -> HttpPut(uri)
-        "delete" -> HttpDelete(uri)
-        "options" -> HttpOptions(uri)
-        "head" -> HttpHead(uri)
-        "trace" -> HttpTrace(uri)
-        "patch" -> HttpPatch(uri)
-        else -> error("unmapped http method: ${request.lowerCaseMethod}")
-    }
-
-    private fun HttpRequestBase.addHeaders(request: Request) {
-        val requestHeaders = request.headers
-        if (requestHeaders != null) {
-            if (!requestHeaders.containsKey("Content-Type")) {
-                this.addHeader("Content-Type", ContentType.APPLICATION_JSON.mimeType)
+        private fun buildRequestBase(uri: URI, request: Request) = with(request.method) {
+            when {
+                equals("get", true) -> HttpGet(uri)
+                equals("post", true) -> HttpPost(uri)
+                equals("put", true) -> HttpPut(uri)
+                equals("delete", true) -> HttpDelete(uri)
+                equals("options", true) -> HttpOptions(uri)
+                equals("head", true) -> HttpHead(uri)
+                equals("trace", true) -> HttpTrace(uri)
+                equals("patch", true) -> HttpPatch(uri)
+                else -> error("unknown HTTP method: $this")
             }
-            requestHeaders.forEach { (name, value) ->
+        }
+
+        private fun HttpRequestBase.addHeaders(request: Request) {
+            request.headers?.forEach { (name, value) ->
                 this.addHeader(name, value)
             }
         }
-    }
 
-    private fun HttpRequestBase.addBody(request: Request) {
-        if (this is HttpEntityEnclosingRequest) {
-            if (isUrlEncodedFormPost(request)) {
-                val charset = "UTF-8"
-                val parameters = request.query.flatMap { entry -> entry.value.map { BasicNameValuePair(entry.key, it) } }
-                this.entity = UrlEncodedFormEntity(parameters, charset)
-            } else if (request.body?.isPresent() == true) {
-                this.entity = StringEntity(request.body.orElse(""))
+        private fun HttpRequestBase.addBody(request: Request) {
+            val hasBody = request.body?.isPresent() == true
+            val canHaveBody = this is HttpEntityEnclosingRequest
+
+            if (hasBody && canHaveBody) {
+                this as HttpEntityEnclosingRequest
+
+                val contentType: ContentType = determineContentType(request)
+                val body = request.body!!.value!!
+                this.entity = StringEntity(body, contentType)
+                this.setHeader(entity.contentType)
+            }
+
+            if (hasBody && !canHaveBody) {
+                error("request definition contains body, but [${request.method}] requests can't have bodies!")
             }
         }
-    }
 
-    private fun extractResponse(httpResponse: HttpResponse): MatchableResponse {
-        val status: Int = httpResponse.statusLine.statusCode
-        val headers: Map<String, String> = httpResponse.allHeaders.associate { header -> header.name to header.value }
-        val body: String? = httpResponse.entity?.let {
-            val contentType: ContentType = it.contentType
-                    ?.let { ContentType.parse(it.value) }
-                    ?: ContentType.TEXT_PLAIN
-            EntityUtils.toString(it, contentType.charset?.name() ?: "UTF-8")
+        private fun determineContentType(request: Request): ContentType {
+            // NOTE: 'request.contentTypeHeader()' determines content type if header not set and defaults to text/plain
+            return request.contentTypeHeader().let { ContentType.parse(it) }
         }
-        return MatchableResponse(status = status, headers = headers, body = body)
+
     }
 
-    private fun isUrlEncodedFormPost(request: Request) =
-            request.lowerCaseMethod == "post" && request.mimeType() == "application/x-www-form-urlencoded"
+    internal object ResponseExtractor {
 
-    private val Request.lowerCaseMethod
-        get() = method.toLowerCase()
+        fun extract(response: HttpResponse): MatchableResponse {
+            val status: Int = response.statusLine.statusCode
+            val headers: Map<String, String> = response.allHeaders.associate { header -> header.name to header.value }
+            val body: String? = response.entity?.let {
+                val charset = it.contentType
+                        ?.let { ContentType.parse(it.value)?.charset }
+                        ?: Charsets.ISO_8859_1
+                EntityUtils.toString(it, charset)
+            }
+            return MatchableResponse(status, headers, body)
+        }
+
+    }
 
 }
