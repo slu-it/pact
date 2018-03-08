@@ -25,10 +25,10 @@ class HttpContractTest {
 
     @LocalServerPort
     fun init(port: Int) {
-        pacts.target.port = { port }
+        pacts.target.bindPort { port }
     }
 
-    @TestFactory fun `library enrichment contract tests`() = 
+    @TestFactory fun `library enrichment contract tests`() =
             PactTestFactory.createTests(pacts, "library-enrichment", this)
 
     @ProviderState("A book with the ID {bookId} exists")
