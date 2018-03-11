@@ -2,7 +2,7 @@ package org.testit.pact.provider.message
 
 import au.com.dius.pact.model.v3.messaging.Message
 import au.com.dius.pact.model.v3.messaging.MessagePact
-import org.testit.pact.commons.logger
+import mu.KotlinLogging.logger
 import org.testit.pact.provider.ExecutablePact
 import org.testit.pact.provider.sources.PactSource
 
@@ -11,7 +11,7 @@ class MessagePacts(
         private val provider: String
 ) {
 
-    private val log = MessagePacts::class.logger
+    private val log = logger {}
     private val matcher = MessageMatcher()
 
     fun createExecutablePacts(consumerFilter: String? = null, callbackHandler: Any): List<ExecutablePact> {
@@ -31,7 +31,7 @@ class MessagePacts(
         val pacts = pactSource.loadPacts(providerFilter, consumerFilter)
                 .filter { it is MessagePact }
                 .map { it as MessagePact }
-        log.debug("loaded {} message pacts from [{}] for providerFilter={} and consumerFilter={}", pacts.size, pactSource, providerFilter, consumerFilter)
+        log.debug { "loaded ${pacts.size} message pacts from [$pactSource] for providerFilter=$providerFilter and consumerFilter=$consumerFilter" }
         if (pacts.isEmpty()) {
             throw NoMessagePactsFoundException(pactSource, provider, consumerFilter)
         }
@@ -46,7 +46,7 @@ class MessagePacts(
             throw MessageMismatchException(result)
         }
 
-        log.info("Message interaction [{}] matched expectations.", expectedMessage.description)
+        log.info { "Message interaction [${expectedMessage.description}] matched expectations." }
     }
 
 }

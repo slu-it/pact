@@ -2,11 +2,10 @@ package org.testit.pact.provider.http
 
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.RequestResponsePact
-import org.testit.pact.commons.logger
+import mu.KotlinLogging.logger
 import org.testit.pact.provider.ExecutablePact
 import org.testit.pact.provider.http.clients.ApacheHttpClient
 import org.testit.pact.provider.http.clients.HttpClient
-import org.testit.pact.provider.message.MessagePacts
 import org.testit.pact.provider.sources.PactSource
 
 class RequestResponsePacts(
@@ -16,7 +15,7 @@ class RequestResponsePacts(
         val target: Target = Target()
 ) {
 
-    private val log = MessagePacts::class.logger
+    private val log = logger {}
     private val matcher = ResponseMatcher()
 
     fun createExecutablePacts(consumerFilter: String? = null, callbackHandler: Any? = null): List<ExecutablePact> {
@@ -36,7 +35,7 @@ class RequestResponsePacts(
         val pacts = pactSource.loadPacts(providerFilter, consumerFilter)
                 .filter { it is RequestResponsePact }
                 .map { it as RequestResponsePact }
-        log.debug("loaded {} request/response pacts from [{}] for providerFilter={} and consumerFilter={}", pacts.size, pactSource, providerFilter, consumerFilter)
+        log.debug { "loaded ${pacts.size} request/response pacts from [$pactSource] for providerFilter=$providerFilter and consumerFilter=$consumerFilter" }
         if (pacts.isEmpty()) {
             throw NoRequestResponsePactsFoundException(pactSource, provider, consumerFilter)
         }
@@ -54,7 +53,7 @@ class RequestResponsePacts(
             throw ResponseMismatchException(result)
         }
 
-        log.info("Response for interaction [{}] matched expectations.", interaction.description)
+        log.info { "Response for interaction [${interaction.description}] matched expectations." }
     }
 
 }
