@@ -51,6 +51,11 @@
         </dependency>
 
         <dependency>
+            <!--
+            ## Strange dependencies:
+             - "javax.mail" is used when by `BaseRequest.withMultipartFileUpload`
+             - "commons-collections4" is used by `PathExpressions`
+            -->
             <groupId>au.com.dius</groupId>
             <artifactId>pact-jvm-matchers_2.12</artifactId>
             <exclusions>
@@ -90,18 +95,13 @@
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
-                    <!-- Apparently not needed. -->
+                    <!-- Not needed by us. MockHttpsProviderConfig class needs it. -->
                     <groupId>io.netty</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
-                    <!-- Apparently not needed. -->
+                    <!-- Not needed by us. PactReader class needs it for S3 bucket method. -->
                     <groupId>com.amazonaws</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <!-- Apparently not needed. -->
-                    <groupId>javax.mail</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
@@ -110,14 +110,14 @@
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
-                    <!-- Apparently not needed. -->
+                    <!-- Might not really be needed since it is used to generate random RegEx (Generator.kt). -->
                     <groupId>com.github.mifmif</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
                     <!-- Apparently not needed. -->
                     <groupId>org.apache.commons</groupId>
-                    <artifactId>*</artifactId>
+                    <artifactId>commons-lang3</artifactId>
                 </exclusion>
                 <exclusion>
                     <!-- Apparently not needed. -->
