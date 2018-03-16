@@ -32,6 +32,7 @@
     </scm>
 
     <modules>
+        <module>pact-model</module>
         <module>pact-provider</module>
         <module>pact-provider-junit5</module>
     </modules>
@@ -51,6 +52,7 @@
         <kotlin-logging.version>1.5.3</kotlin-logging.version>
         <pact.version>3.5.13</pact.version>
         <httpclient.version>4.5.5</httpclient.version>
+        <jackson.version>2.9.0</jackson.version>
 
         <assertj.version>3.9.1</assertj.version>
         <kotlin-mockito.version>2.0.0-alpha03</kotlin-mockito.version>

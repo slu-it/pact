@@ -20,10 +20,6 @@
             <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
-        </dependency>
-        <dependency>
             <!-- Because parts of Pact are written in Scala. -->
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
