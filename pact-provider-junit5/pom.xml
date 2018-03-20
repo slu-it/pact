@@ -7,7 +7,7 @@
     <parent>
         <groupId>info.novatec.testit</groupId>
         <artifactId>pact</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>pact-provider-junit5</artifactId>

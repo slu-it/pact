@@ -5,7 +5,7 @@
 
     <groupId>info.novatec.testit</groupId>
     <artifactId>pact</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>testIT | Pact Libraries</name>
@@ -30,10 +30,6 @@
         <developerConnection>scm:git:git@github.com:nt-ca-aqe/pact.git</developerConnection>
         <url>git@github.com:nt-ca-aqe/pact.git</url>
     </scm>
-
-    <prerequisites>
-        <maven>3.0.4</maven>
-    </prerequisites>
 
     <modules>
         <module>pact-provider</module>
@@ -187,7 +183,7 @@
                 <version>0.9.16</version>
                 <executions>
                     <execution>
-                        <phase>validate</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>javadocJar</goal>
                         </goals>
