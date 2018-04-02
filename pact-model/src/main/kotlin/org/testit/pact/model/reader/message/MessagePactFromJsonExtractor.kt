@@ -10,10 +10,10 @@ internal class MessagePactFromJsonExtractor {
     private val contentsExtractor = ContentsExtractor()
     private val metaDataExtractor = MetaDataExtractor()
 
-    fun extract(provider: Provider, consumer: Consumer, metadata: PactMetadata, messagesData: List<Map<String, Any>>): MessagePact {
+    fun extract(provider: Provider, consumer: Consumer, specification: PactSpecification, messagesData: List<Map<String, Any>>): MessagePact {
         try {
             val messages = messagesData.map(::toMessage)
-            return MessagePact(provider, consumer, metadata, messages)
+            return MessagePact(provider, consumer, specification, messages)
         } catch (e: IllegalArgumentException) {
             throw MalformedPactException(e.message, e)
         } catch (e: IllegalStateException) {

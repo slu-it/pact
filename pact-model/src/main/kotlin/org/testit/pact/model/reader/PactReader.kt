@@ -1,9 +1,7 @@
 package org.testit.pact.model.reader
 
-import org.testit.pact.model.MessagePact
-import org.testit.pact.model.Pact
-import org.testit.pact.model.PactMetadata
-import org.testit.pact.model.RequestResponsePact
+import org.testit.pact.model.*
+import org.testit.pact.model.PactSpecification.V3_0
 import org.testit.pact.model.json.JsonParser
 import org.testit.pact.model.reader.common.ConsumerFromJsonExtractor
 import org.testit.pact.model.reader.common.PactMetadataFromJsonExtractor
@@ -36,7 +34,7 @@ class PactReader(
      *          if the given stream contains non-JSON content
      * @throws MalformedPactException
      *          if the pact is missing required data
-     * @throws UnsupportedPactVersionException
+     * @throws UnsupportedPactSpecificationVersionException
      *          if the stream contains a pact of an unsupported version
      */
     @Suppress("UNCHECKED_CAST")
@@ -45,28 +43,27 @@ class PactReader(
 
         val provider = providerExtractor.extract(json)
         val consumer = consumerExtractor.extract(json)
-        val metadata = metadataExtractor.extract(json)
+        val specification = metadataExtractor.extractSpecification(json)
 
-        assertSupportedVersions(metadata)
+        assertSupportedVersions(specification)
 
         // TODO: what about files containing both interactions and messages?
         return when {
             json["interactions"] is List<*> -> {
                 val interactions = json["interactions"] as List<Map<String, Any>>
-                requestResponsePactExtractor.extract(provider, consumer, metadata, interactions)
+                requestResponsePactExtractor.extract(provider, consumer, specification, interactions)
             }
             json["messages"] is List<*> -> {
                 val messages = json["messages"] as List<Map<String, Any>>
-                messagePactExtractor.extract(provider, consumer, metadata, messages)
+                messagePactExtractor.extract(provider, consumer, specification, messages)
             }
             else -> throw UnidentifiablePactException()
         }
     }
 
-    private fun assertSupportedVersions(metadata: PactMetadata) {
-        val version = metadata.pactSpecification.version
-        if (version != "3.0.0") {
-            throw UnsupportedPactVersionException(version)
+    private fun assertSupportedVersions(specification: PactSpecification) {
+        if (specification != V3_0) {
+            throw UnsupportedPactSpecificationVersionException(specification)
         }
     }
 

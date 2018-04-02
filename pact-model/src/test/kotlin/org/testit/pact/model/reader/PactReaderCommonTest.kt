@@ -1,5 +1,6 @@
 package org.testit.pact.model.reader
 
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -7,8 +8,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import org.testit.pact.model.json.JacksonJsonParser
 import org.testit.pact.model.Pact
+import org.testit.pact.model.PactSpecification
+import org.testit.pact.model.json.JacksonJsonParser
 
 
 @DisplayName("PactReader: common tests")
@@ -38,17 +40,18 @@ internal class PactReaderCommonTest {
 
         @ValueSource(strings = ["3.0.0"])
         @ParameterizedTest fun `supported`(version: String) {
-            loadPact("""{
+            val pact = loadPact("""{
                 "provider": { "name": "foo-provider" },
                 "consumer": { "name": "bar-consumer" },
                 "metadata": { "pact-specification": { "version": "$version" } },
                 "interactions": []
             }""")
+            assertThat(pact.specification).isEqualTo(PactSpecification.parse(version))
         }
 
         @ValueSource(strings = ["1.0.0", "1.1.0", "2.0.0", "4.0.0"])
         @ParameterizedTest fun `not supported`(version: String) {
-            assertThrows<UnsupportedPactVersionException> {
+            assertThrows<UnsupportedPactSpecificationVersionException> {
                 loadPact("""{
                     "provider": { "name": "foo-provider" },
                     "consumer": { "name": "bar-consumer" },
@@ -192,12 +195,21 @@ internal class PactReaderCommonTest {
                             }"""
                         }
 
-                @Test fun `pact specification  version must be a string`() =
+                @Test fun `pact specification version must be a string`() =
                         assertThrowsMalformedPactException("pact property 'metadata.pact-specification.version' [true] is not a string") {
                             """{
                                 "provider": { "name": "foo-provider" },
                                 "consumer": { "name": "bar-consumer" },
                                 "metadata": { "pact-specification": { "version": true } }
+                            }"""
+                        }
+
+                @Test fun `pact specification version must be a known version`() =
+                        assertThrowsMalformedPactException("pact property 'metadata.pact-specification.version' [abc] is not a known version") {
+                            """{
+                                "provider": { "name": "foo-provider" },
+                                "consumer": { "name": "bar-consumer" },
+                                "metadata": { "pact-specification": { "version": "abc" } }
                             }"""
                         }
 

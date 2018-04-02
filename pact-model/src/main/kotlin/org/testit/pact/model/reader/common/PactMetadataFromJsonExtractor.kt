@@ -1,12 +1,11 @@
 package org.testit.pact.model.reader.common
 
-import org.testit.pact.model.PactMetadata
 import org.testit.pact.model.PactSpecification
 import org.testit.pact.model.reader.MalformedPactException
 
 internal class PactMetadataFromJsonExtractor {
 
-    fun extract(json: Map<String, Any>) = try {
+    fun extractSpecification(json: Map<String, Any>) = try {
         val metadata = json["metadata"]
         require(metadata is Map<*, *>) { "pact property 'metadata' [$metadata] is not an object" }
         metadata as Map<*, *>
@@ -19,7 +18,10 @@ internal class PactMetadataFromJsonExtractor {
         require(version is String) { "pact property 'metadata.pact-specification.version' [$version] is not a string" }
         version as String
 
-        PactMetadata(PactSpecification(version))
+        val specification = PactSpecification.parse(version)
+        require(specification != null) { "pact property 'metadata.pact-specification.version' [$version] is not a known version" }
+
+        specification!!
     } catch (e: IllegalArgumentException) {
         throw MalformedPactException(e.message)
     }

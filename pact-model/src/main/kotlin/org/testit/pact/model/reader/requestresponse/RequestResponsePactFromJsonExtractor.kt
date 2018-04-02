@@ -10,10 +10,10 @@ internal class RequestResponsePactFromJsonExtractor {
     private val requestExtractor = RequestExtractor()
     private val responseExtractor = ResponseExtractor()
 
-    fun extract(provider: Provider, consumer: Consumer, metadata: PactMetadata, interactionData: List<Map<String, Any>>): RequestResponsePact {
+    fun extract(provider: Provider, consumer: Consumer, specification: PactSpecification, interactionData: List<Map<String, Any>>): RequestResponsePact {
         try {
             val interactions = interactionData.map(::toInteraction)
-            return RequestResponsePact(provider, consumer, metadata, interactions)
+            return RequestResponsePact(provider, consumer, specification, interactions)
         } catch (e: IllegalArgumentException) {
             throw MalformedPactException(e.message, e)
         } catch (e: IllegalStateException) {

@@ -5,10 +5,11 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.testit.pact.model.json.JacksonJsonParser
 import org.testit.pact.model.HttpMethod
 import org.testit.pact.model.Pact
+import org.testit.pact.model.PactSpecification.V3_0
 import org.testit.pact.model.RequestResponsePact
+import org.testit.pact.model.json.JacksonJsonParser
 
 
 @DisplayName("PactReader: RequestResponsePact tests")
@@ -31,7 +32,7 @@ internal class PactReaderRequestResponsePactTest {
             assertThat(provider.name).isEqualTo("foo-provider")
             assertThat(consumer.name).isEqualTo("bar-consumer")
             assertThat(interactions).isEmpty()
-            assertThat(metadata.pactSpecification.version).isEqualTo("3.0.0")
+            assertThat(specification).isEqualTo(V3_0)
         }
     }
 

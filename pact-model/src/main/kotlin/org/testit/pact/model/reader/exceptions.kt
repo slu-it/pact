@@ -1,13 +1,14 @@
 package org.testit.pact.model.reader
 
 import com.fasterxml.jackson.core.JsonParseException
+import org.testit.pact.model.PactSpecification
 
 
 class MalformedPactFileException(cause: JsonParseException)
     : PactReaderException("The pact file is malformed: ${cause.message}", cause)
 
-class UnsupportedPactVersionException(actualVersion: String)
-    : PactReaderException("The pact's version $actualVersion is not supported! Currently only v3.0.0 is supported.")
+class UnsupportedPactSpecificationVersionException(actualSpecification: PactSpecification)
+    : PactReaderException("The pact specification's version $actualSpecification is not supported! Currently only v3.0.0 is supported.")
 
 class UnidentifiablePactException
     : MalformedPactException("The pact kind could not be determined! It contained neither 'interactions' nor 'messages'.")
