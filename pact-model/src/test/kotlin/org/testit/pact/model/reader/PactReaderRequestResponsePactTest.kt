@@ -6,9 +6,9 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.testit.pact.model.json.JacksonJsonParser
-import org.testit.pact.model.v3.Method
-import org.testit.pact.model.v3.Pact
-import org.testit.pact.model.v3.RequestResponsePact
+import org.testit.pact.model.HttpMethod
+import org.testit.pact.model.Pact
+import org.testit.pact.model.RequestResponsePact
 
 
 @DisplayName("PactReader: RequestResponsePact tests")
@@ -60,7 +60,7 @@ internal class PactReaderRequestResponsePactTest {
                 assertThat(description).isEqualTo("some unique description")
                 assertThat(providerStates).isEmpty()
                 with(request) {
-                    assertThat(method).isSameAs(Method.GET)
+                    assertThat(method).isSameAs(HttpMethod.GET)
                     assertThat(path).isEqualTo("/")
                     assertThat(headers).isEmpty()
                     assertThat(query).isEmpty()
@@ -129,7 +129,7 @@ internal class PactReaderRequestResponsePactTest {
             with(interactions[0]) {
                 assertThat(description).isEqualTo("some unique description")
                 assertThat(providerStates).hasSize(2)
-                with(providerStates!!) {
+                with(providerStates) {
                     with(get(0)) {
                         assertThat(name).isEqualTo("state without parameters")
                         assertThat(parameters).isEmpty()
@@ -143,7 +143,7 @@ internal class PactReaderRequestResponsePactTest {
                     }
                 }
                 with(request) {
-                    assertThat(method).isSameAs(Method.POST)
+                    assertThat(method).isSameAs(HttpMethod.POST)
                     assertThat(path).isEqualTo("/")
                     assertThat(query)
                             .containsEntry("foo", listOf("value"))
@@ -390,7 +390,7 @@ internal class PactReaderRequestResponsePactTest {
             @Nested inner class MethodProperty {
 
                 @Test fun `method must not be null`() =
-                        assertThrowsMalformedPactException("request property 'method' [null] is not a string") {
+                        assertThrowsMalformedPactException("interaction property 'request.method' [null] is not a string") {
                             """{
                                 "provider": { "name": "foo-provider" },
                                 "consumer": { "name": "bar-consumer" },
@@ -403,7 +403,7 @@ internal class PactReaderRequestResponsePactTest {
                         }
 
                 @Test fun `method must be a string`() =
-                        assertThrowsMalformedPactException("request property 'method' [true] is not a string") {
+                        assertThrowsMalformedPactException("interaction property 'request.method' [true] is not a string") {
                             """{
                                 "provider": { "name": "foo-provider" },
                                 "consumer": { "name": "bar-consumer" },
@@ -417,13 +417,28 @@ internal class PactReaderRequestResponsePactTest {
                             }"""
                         }
 
+                @Test fun `method must be a valid HTTP method`() =
+                        assertThrowsMalformedPactException("interaction property 'request.method' [foo] is not a known HTTP method") {
+                            """{
+                                "provider": { "name": "foo-provider" },
+                                "consumer": { "name": "bar-consumer" },
+                                "metadata": { "pact-specification": { "version": "3.0.0" } },
+                                "interactions": [{
+                                    "description": "description",
+                                    "request": {
+                                        "method": "foo"
+                                    }
+                                }]
+                            }"""
+                        }
+
             }
 
             @DisplayName("path property")
             @Nested inner class PathProperty {
 
                 @Test fun `path must not be null`() =
-                        assertThrowsMalformedPactException("request property 'path' [null] is not a string") {
+                        assertThrowsMalformedPactException("interaction property 'request.path' [null] is not a string") {
                             """{
                                 "provider": { "name": "foo-provider" },
                                 "consumer": { "name": "bar-consumer" },
@@ -438,7 +453,7 @@ internal class PactReaderRequestResponsePactTest {
                         }
 
                 @Test fun `path must be a string`() =
-                        assertThrowsMalformedPactException("request property 'path' [true] is not a string") {
+                        assertThrowsMalformedPactException("interaction property 'request.path' [true] is not a string") {
                             """{
                                 "provider": { "name": "foo-provider" },
                                 "consumer": { "name": "bar-consumer" },

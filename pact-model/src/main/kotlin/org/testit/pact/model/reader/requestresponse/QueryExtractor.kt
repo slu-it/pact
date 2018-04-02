@@ -1,10 +1,8 @@
 package org.testit.pact.model.reader.requestresponse
 
-import org.testit.pact.model.v3.Query
-
 internal class QueryExtractor {
 
-    fun extract(data: Map<*, *>): Query {
+    fun extract(data: Map<*, *>): Map<String, List<String>> {
         val node = data["query"]
         return when (node) {
             null -> emptyMap()

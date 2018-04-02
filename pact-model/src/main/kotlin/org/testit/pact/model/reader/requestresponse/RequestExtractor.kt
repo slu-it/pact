@@ -1,7 +1,7 @@
 package org.testit.pact.model.reader.requestresponse
 
-import org.testit.pact.model.v3.Method
-import org.testit.pact.model.v3.Request
+import org.testit.pact.model.HttpMethod
+import org.testit.pact.model.Request
 
 internal class RequestExtractor {
 
@@ -22,15 +22,19 @@ internal class RequestExtractor {
         return Request(method, path, query, headers, body)
     }
 
-    private fun getMethod(data: Map<*, *>): Method {
+    private fun getMethod(data: Map<*, *>): HttpMethod {
         val method = data["method"]
-        require(method is String) { "request property 'method' [$method] is not a string" }
-        return Method.parse(method as String) ?: error("could not identify method [$method]") // TODO: better text
+        require(method is String) { "interaction property 'request.method' [$method] is not a string" }
+        method as String
+
+        val httpMethod = HttpMethod.parse(method)
+        require(httpMethod != null) { "interaction property 'request.method' [$method] is not a known HTTP method" }
+        return httpMethod!!
     }
 
     private fun getPath(data: Map<*, *>): String {
         val path = data["path"]
-        require(path is String) { "request property 'path' [$path] is not a string" }
+        require(path is String) { "interaction property 'request.path' [$path] is not a string" }
         return path as String
     }
 

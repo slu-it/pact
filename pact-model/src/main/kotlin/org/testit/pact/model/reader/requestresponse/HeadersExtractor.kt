@@ -1,7 +1,5 @@
 package org.testit.pact.model.reader.requestresponse
 
-import org.testit.pact.model.v3.Headers
-
 internal class RequestHeadersExtractor : AbstractHeadersExtractor() {
     override val container = "request"
 }
@@ -14,7 +12,7 @@ internal abstract class AbstractHeadersExtractor {
 
     protected abstract val container: String
 
-    fun extract(data: Map<*, *>): Headers {
+    fun extract(data: Map<*, *>): Map<String, String> {
         val node = data["headers"]
         return when (node) {
             null -> emptyMap()

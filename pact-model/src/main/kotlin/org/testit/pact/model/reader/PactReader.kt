@@ -1,15 +1,15 @@
 package org.testit.pact.model.reader
 
+import org.testit.pact.model.MessagePact
+import org.testit.pact.model.Pact
+import org.testit.pact.model.PactMetadata
+import org.testit.pact.model.RequestResponsePact
 import org.testit.pact.model.json.JsonParser
 import org.testit.pact.model.reader.common.ConsumerFromJsonExtractor
 import org.testit.pact.model.reader.common.PactMetadataFromJsonExtractor
 import org.testit.pact.model.reader.common.ProviderFromJsonExtractor
 import org.testit.pact.model.reader.message.MessagePactFromJsonExtractor
 import org.testit.pact.model.reader.requestresponse.RequestResponsePactFromJsonExtractor
-import org.testit.pact.model.v3.MessagePact
-import org.testit.pact.model.v3.Pact
-import org.testit.pact.model.v3.PactMetadata
-import org.testit.pact.model.v3.RequestResponsePact
 import java.io.InputStream
 
 class PactReader(

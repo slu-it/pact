@@ -1,8 +1,8 @@
 package org.testit.pact.model.reader.common
 
+import org.testit.pact.model.PactMetadata
+import org.testit.pact.model.PactSpecification
 import org.testit.pact.model.reader.MalformedPactException
-import org.testit.pact.model.v3.PactMetadata
-import org.testit.pact.model.v3.PactSpecification
 
 internal class PactMetadataFromJsonExtractor {
 

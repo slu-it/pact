@@ -6,8 +6,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.testit.pact.model.json.JacksonJsonParser
-import org.testit.pact.model.v3.MessagePact
-import org.testit.pact.model.v3.Pact
+import org.testit.pact.model.MessagePact
+import org.testit.pact.model.Pact
 
 @DisplayName("PactReader: MessagePact tests")
 internal class PactReaderMessagePactTest {
@@ -94,11 +94,11 @@ internal class PactReaderMessagePactTest {
                 assertThat(description).isEqualTo("some unique description")
 
                 assertThat(providerStates).hasSize(2)
-                with(providerStates!![0]) {
+                with(providerStates[0]) {
                     assertThat(name).isEqualTo("state without parameters")
                     assertThat(parameters).isEmpty()
                 }
-                with(providerStates!![1]) {
+                with(providerStates[1]) {
                     assertThat(name).isEqualTo("state with parameters")
                     assertThat(parameters)
                             .containsEntry("foo", "string")

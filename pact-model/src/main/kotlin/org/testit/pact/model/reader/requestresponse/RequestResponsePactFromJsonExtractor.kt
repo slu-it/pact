@@ -1,7 +1,7 @@
 package org.testit.pact.model.reader.requestresponse
 
+import org.testit.pact.model.*
 import org.testit.pact.model.reader.MalformedPactException
-import org.testit.pact.model.v3.*
 
 internal class RequestResponsePactFromJsonExtractor {
 

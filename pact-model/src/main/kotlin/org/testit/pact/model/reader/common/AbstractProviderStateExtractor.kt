@@ -1,6 +1,6 @@
 package org.testit.pact.model.reader.common
 
-import org.testit.pact.model.v3.ProviderState
+import org.testit.pact.model.ProviderState
 
 internal abstract class AbstractProviderStateExtractor {
 

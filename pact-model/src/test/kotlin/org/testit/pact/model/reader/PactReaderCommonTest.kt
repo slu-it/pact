@@ -8,7 +8,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.testit.pact.model.json.JacksonJsonParser
-import org.testit.pact.model.v3.Pact
+import org.testit.pact.model.Pact
 
 
 @DisplayName("PactReader: common tests")

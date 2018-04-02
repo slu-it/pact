@@ -1,7 +1,7 @@
 package org.testit.pact.model.reader.common
 
+import org.testit.pact.model.Provider
 import org.testit.pact.model.reader.MalformedPactException
-import org.testit.pact.model.v3.Provider
 
 internal class ProviderFromJsonExtractor {
 

@@ -1,6 +1,6 @@
 package org.testit.pact.model.reader.requestresponse
 
-import org.testit.pact.model.v3.Response
+import org.testit.pact.model.Response
 
 internal class ResponseExtractor {
 
