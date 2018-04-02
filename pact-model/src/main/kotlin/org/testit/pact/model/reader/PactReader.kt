@@ -24,10 +24,13 @@ class PactReader(
     private val messagePactExtractor = MessagePactFromJsonExtractor()
 
     /**
-     * Parses the given [InputStream] as either a [RequestResponsePact] or a
-     * [MessagePact], depending ont the actual content.
+     * Parses the given `UTF-8` encoded [InputStream] as either a
+     * [RequestResponsePact] or a [MessagePact], depending on the actual
+     * content. Please note that, at the moment, only Pact specification
+     * v3.0.0 compliant content can be processed.
      *
-     * Currently only Pact specification v3.0.0 content is supported!
+     * **Warning:** Providing a non `UTF-8` encoded [InputStream] might result
+     * in strange behavior when the loaded [Pact] is used!
      *
      * @throws MalformedPactFileException
      *          if the given stream contains non-JSON content
@@ -46,6 +49,7 @@ class PactReader(
 
         assertSupportedVersions(metadata)
 
+        // TODO: what about files containing both interactions and messages?
         return when {
             json["interactions"] is List<*> -> {
                 val interactions = json["interactions"] as List<Map<String, Any>>
